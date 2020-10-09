@@ -1,3 +1,5 @@
+require "aws-sigv4"
+
 module AWS #:nodoc:
   # AWS::SES is a Ruby library for Amazon's Simple Email Service's REST API (http://aws.amazon.com/ses).
   # 
@@ -176,10 +178,11 @@ module AWS #:nodoc:
         end.join("&")
 
         req = {}
-
-        req['X-Amzn-Authorization'] = get_aws_auth_param(timestamp.httpdate, @secret_access_key, action, signature_version)
         req['Date'] = timestamp.httpdate
         req['User-Agent'] = @user_agent
+
+        signature_v4 = sign_request(body: query)
+        req.merge!(signature_v4.headers)
 
         response = connection.post(@path, query, req)
         
@@ -191,6 +194,21 @@ module AWS #:nodoc:
         end
         
         result
+      end
+
+      def sign_request(headers: {}, body:)
+        signer = Aws::Sigv4::Signer.new(
+          service: "email",
+          region: @region,
+          access_key_id: @access_key_id,
+          secret_access_key: @secret_access_key
+        )
+        signer.sign_request(
+          http_method: "POST",
+          url: "https://#{@server}#{@path}",
+          headers: headers,
+          body: body
+        )
       end
 
       # Set the Authorization header using AWS signed header authentication

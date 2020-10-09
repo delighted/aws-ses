@@ -65,6 +65,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<mail>.freeze, ["> 2.2.5"])
       s.add_runtime_dependency(%q<mime-types>.freeze, [">= 0"])
       s.add_runtime_dependency(%q<xml-simple>.freeze, [">= 0"])
+      s.add_runtime_dependency(%q<aws-sigv4>.freeze, [">= 1"])
       s.add_development_dependency(%q<bundler>.freeze, [">= 1.17"])
       s.add_development_dependency(%q<flexmock>.freeze, ["~> 0.8.11"])
       s.add_development_dependency(%q<jeweler>.freeze, [">= 0"])
